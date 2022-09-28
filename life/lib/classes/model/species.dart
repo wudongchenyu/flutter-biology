@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:decimal/decimal.dart';
 
@@ -45,6 +44,7 @@ class BiologyArticle {
   late int articleType;
   late int affiliation;
   late String author;
+  late String authorIcons;
   late String biologyCode;
   late String intro;
   late bool enabled;
@@ -62,6 +62,7 @@ class BiologyArticle {
     required this.articleType,
     required this.affiliation,
     required this.author,
+    required this.authorIcons,
     required this.biologyCode,
     required this.intro,
     required this.enabled,
@@ -81,6 +82,7 @@ class BiologyArticle {
       articleType: json['articleType'],
       affiliation: json['affiliation'],
       author: json['author'],
+      authorIcons: json['articleIcons'],
       biologyCode: json['biologyCode'],
       intro: json['intro'],
       enabled: json['enabled'],
@@ -101,6 +103,7 @@ class BiologyArticle {
     'articleType': articleType,
     'affiliation': affiliation,
     'author': author,
+    'authorIcons': authorIcons,
     'biologyCode': biologyCode,
     'intro': intro,
     'enabled': enabled,

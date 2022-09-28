@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      routerDelegate: CustomRouter(),
+      routerDelegate: Delegate(),
       routeInformationParser: const ConsumerRouteInformationParser(),
       // initialRoute: "/",
       // routes: {

@@ -48,7 +48,7 @@ class _ToolsWidgetState extends State<ToolsWidget> {
         if (kDebugMode) {
           print(action.icon);
         }
-        CustomRouter().push(
+        Delegate().push(
           name: action.value,
         );
       },

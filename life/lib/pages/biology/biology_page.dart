@@ -21,23 +21,31 @@ class BiologyPageWidget extends StatefulWidget {
 class _BiologyPageWidgetState extends State<BiologyPageWidget> {
   late int _current = 1;
 
-  late List<BiologyArticle> allArticles = [];
+  late int maxPage = 1;
+
+  List<BiologyArticle> allArticles = [];
 
   ScrollController controller = ScrollController();
 
-  late Stream<List<BiologyArticle>> _stream;
+  late StreamController<List<BiologyArticle>> articleController =
+      StreamController();
+
+  late Sink<List<BiologyArticle>> articleSink = articleController.sink;
+
+  late Stream<List<BiologyArticle>> articleStream = articleController.stream;
 
   @override
   void initState() {
     super.initState();
     _current = 1;
-    _stream = acquireArticleStream();
-    controller.addListener(() {
-      if (kDebugMode) {
-        print('pixels:${controller.position.pixels}');
-        print('maxScrollExtent:${controller.position.maxScrollExtent}');
-      }
+    refreshGridView();
+    articleStream.listen((event) {
+      setState(() {
+        allArticles.addAll(event);
+      });
+    });
 
+    controller.addListener(() {
       if (controller.position.pixels == controller.position.maxScrollExtent) {
         appendGridView();
       }
@@ -48,6 +56,7 @@ class _BiologyPageWidgetState extends State<BiologyPageWidget> {
   void dispose() {
     super.dispose();
     controller.dispose();
+    articleController.close();
   }
 
   @override
@@ -58,9 +67,6 @@ class _BiologyPageWidgetState extends State<BiologyPageWidget> {
 
     final double width = MediaQuery.of(context).size.width;
     final double rowWidth = width / 2;
-    if (kDebugMode) {
-      print('rowWidth:$rowWidth');
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -73,38 +79,24 @@ class _BiologyPageWidgetState extends State<BiologyPageWidget> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: StreamBuilder<List<BiologyArticle>>(
-          stream: _stream,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<BiologyArticle>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-
-              List<BiologyArticle> newArticles = snapshot.data ?? [];
-
-              initGridView(context, newArticles);
-
-              return RefreshIndicator(
-                onRefresh: refreshGridView,
-                child: GridView.builder(
-                  itemCount: allArticles.length,
-                  shrinkWrap: true,
-                  controller: controller,
-                  padding: const EdgeInsets.all(8.0),
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    childAspectRatio: 5 / 6,
-                    maxCrossAxisExtent: 180.0,
-                    mainAxisSpacing: 5.0,
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    return BiologyCardWidget(
-                        rowWidth: rowWidth, article: allArticles[index]);
-                  },
-                ),
-              );
-            }
-            return Container();
-          },
+        child: RefreshIndicator(
+          onRefresh: refreshGridView,
+          child: GridView.builder(
+            itemCount: allArticles.length,
+            shrinkWrap: true,
+            controller: controller,
+            padding: const EdgeInsets.all(8.0),
+            physics: const AlwaysScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              childAspectRatio: 5 / 6,
+              maxCrossAxisExtent: 180.0,
+              mainAxisSpacing: 5.0,
+            ),
+            itemBuilder: (BuildContext context, int index) {
+              return BiologyCardWidget(
+                  rowWidth: rowWidth, article: allArticles[index]);
+            },
+          ),
         ),
       ),
     );
@@ -114,17 +106,10 @@ class _BiologyPageWidgetState extends State<BiologyPageWidget> {
     if (kDebugMode) {
       print('下拉刷新');
     }
-    allArticles.clear();
     _current = 1;
+    allArticles.clear();
     acquireArticleStream().map((event) {
-      setState(() {
-        if (kDebugMode) {
-          print('刷新数据');
-        }
-
-        allArticles.addAll(event);
-      });
-      return event;
+      articleSink.add(event);
     }).first;
   }
 
@@ -132,33 +117,16 @@ class _BiologyPageWidgetState extends State<BiologyPageWidget> {
     if (kDebugMode) {
       print('上拉加载更多');
     }
+    _current++;
 
-    setState(() {
-      _current++;
-      acquireArticleStream().map((event) {
-        if (kDebugMode) {
-          print(event.toString());
-        }
-        allArticles.addAll(event);
-        return event;
-      }).first;
-    });
-
-
-
-  }
-
-  Future<void> initGridView(
-      BuildContext context, List<BiologyArticle> articles) async {
-
-    if (kDebugMode) {
-      print('initGridView');
+    if (_current > maxPage) {
+      _current = maxPage;
+      return;
     }
 
-    if (_current == 1) {
-      allArticles.clear();
-    }
-    allArticles.addAll(articles);
+    acquireArticleStream().map((event) {
+      articleSink.add(event);
+    }).first;
   }
 
   Stream<List<BiologyArticle>> acquireArticleStream() {
@@ -179,6 +147,10 @@ class _BiologyPageWidgetState extends State<BiologyPageWidget> {
                 return asd;
               }).toList(),
             ))
+        .map((event) {
+          maxPage = event.total;
+          return event;
+        })
         .map((event) => event.data);
   }
 }

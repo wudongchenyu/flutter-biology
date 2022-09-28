@@ -37,7 +37,7 @@ class _GridViewBuildWidgetState extends State<GridViewBuildWidget> {
             onTap: () {
               if (kDebugMode) {
                 print(GridIcons.iconList[index]);
-                CustomRouter().push(
+                Delegate().push(
                   name: GridIcons.getRouter(GridIcons.iconList[index]),
                 );
               }

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:life/pages/biology/biology_page.dart';
 
+import '../pages/biology/biology_detail_page.dart';
 import '../pages/blank_page.dart';
 import '../pages/commons/menus_page.dart';
 import '../pages/homepage/home.dart';
@@ -18,14 +19,14 @@ import '../pages/tools/consumer_scan.dart';
 import '../pages/tools/consumer_setting.dart';
 import '../pages/tools/qr_code.dart';
 
-class CustomRouter extends RouterDelegate<List<RouteSettings>>
+class Delegate extends RouterDelegate<List<RouteSettings>>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
   final List<Page> _pages = [];
 
-  static final CustomRouter _instance =
-      CustomRouter._internal();
+  static final Delegate _instance =
+      Delegate._internal();
 
-  CustomRouter._internal() {
+  Delegate._internal() {
     if (kDebugMode) {
       print('init');
     }
@@ -34,7 +35,7 @@ class CustomRouter extends RouterDelegate<List<RouteSettings>>
     }
   }
 
-  factory CustomRouter() {
+  factory Delegate() {
     return _instance;
   }
 
@@ -107,18 +108,15 @@ class CustomRouter extends RouterDelegate<List<RouteSettings>>
     return await page.result.future;
   }
 
-  void replace({required String name, dynamic arguments}) {
+  Future<dynamic> replace({required String name, dynamic arguments}) async {
     if (_pages.isNotEmpty) {
       _pages.removeLast();
     }
-    push(name: name, arguments: arguments);
+    return push(name: name, arguments: arguments);
   }
 
   CustomPage _createPage(RouteSettings routeSettings) {
     Widget child;
-
-    routeSettings.arguments;
-
     switch (routeSettings.name) {
       case '/':
         child = const Home();
@@ -161,6 +159,9 @@ class CustomRouter extends RouterDelegate<List<RouteSettings>>
         break;
       case '/biology/page':
         child = const BiologyPageWidget();
+        break;
+      case '/article/detail/page':
+        child = BiologyDetailPageWidget(arguments: routeSettings.arguments as Map,);
         break;
       default:
         child = const BlankPageWidget();

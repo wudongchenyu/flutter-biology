@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:math' as math;
 
+import '../classes/consumer_router_delegate.dart';
 import '../classes/model/species.dart';
 
 class BiologyCardWidget extends StatefulWidget {
@@ -21,11 +22,11 @@ class _BiologyCardWidgetState extends State<BiologyCardWidget> {
     if (kDebugMode) {
       print(widget.article);
     }
-
     return Container(
       height: 240.0,
       width: widget.rowWidth,
-      padding: const EdgeInsets.all(5.0,
+      padding: const EdgeInsets.all(
+        5.0,
       ),
       child: Card(
         color: Colors.black12,
@@ -37,9 +38,19 @@ class _BiologyCardWidgetState extends State<BiologyCardWidget> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
-              widget.article?.articleIcons ?? 'asserts/images/b2.jpeg',
-              fit: BoxFit.cover,
+            InkWell(
+              onTap: () {
+                if (kDebugMode) {
+                  print('点击了图片:${widget.article?.code}');
+                }
+                Delegate().push(name: '/article/detail/page', arguments: {
+                  'article': widget.article,
+                });
+              },
+              child: Image.asset(
+                widget.article?.articleIcons ?? 'asserts/images/b2.jpeg',
+                fit: BoxFit.cover,
+              ),
             ),
             Positioned(
               bottom: 5.0,
@@ -89,23 +100,22 @@ class _BiologyCardWidgetState extends State<BiologyCardWidget> {
       case 2:
         result = '已停售';
         break;
-      default :
+      case 3:
         result = '待发售';
-            break;
+        break;
+      default:
+        result = '待发售';
+        break;
     }
     return result;
   }
 
   Widget acquireSale(int? salesStatus) {
-
     if (salesStatus == 0) {
-
       return Container(
         width: 120.0,
         color: Colors.lightGreenAccent,
-        padding: const EdgeInsets.only(
-            left: 30.0
-        ),
+        padding: const EdgeInsets.only(left: 30.0),
         child: const Text(
           '销售中',
           style: TextStyle(
@@ -118,13 +128,10 @@ class _BiologyCardWidgetState extends State<BiologyCardWidget> {
     }
 
     if (salesStatus == 1) {
-
       return Container(
         width: 120.0,
         color: Colors.red,
-        padding: const EdgeInsets.only(
-            left: 30.0
-        ),
+        padding: const EdgeInsets.only(left: 30.0),
         child: const Text(
           '已售罄',
           style: TextStyle(
@@ -140,9 +147,7 @@ class _BiologyCardWidgetState extends State<BiologyCardWidget> {
       return Container(
         width: 120.0,
         color: Colors.red,
-        padding: const EdgeInsets.only(
-            left: 30.0
-        ),
+        padding: const EdgeInsets.only(left: 30.0),
         child: const Text(
           '已停售',
           style: TextStyle(
@@ -158,9 +163,7 @@ class _BiologyCardWidgetState extends State<BiologyCardWidget> {
       return Container(
         width: 120.0,
         color: Colors.grey,
-        padding: const EdgeInsets.only(
-            left: 30.0
-        ),
+        padding: const EdgeInsets.only(left: 30.0),
         child: const Text(
           '待发售',
           style: TextStyle(
@@ -171,8 +174,6 @@ class _BiologyCardWidgetState extends State<BiologyCardWidget> {
         ),
       );
     }
-
-
 
     return const Text(
       '待发售',

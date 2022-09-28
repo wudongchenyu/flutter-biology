@@ -20,13 +20,13 @@ class Result<T> {
   factory Result.fromJson(String jsonString) {
     Map<String, dynamic> result = json.decode(jsonString);
     return Result(
-        code: result['code'],
-        message: result['message'],
-        success: result['success'],
-        timestamp: DateTime.parse(result['timestamp']),
-        data: result['data'].cast<T>(),);
+      code: result['code'],
+      message: result['message'],
+      success: result['success'],
+      timestamp: DateTime.parse(result['timestamp']),
+      data: result['data'],
+    );
   }
-
 }
 
 @JsonSerializable(genericArgumentFactories: true)
@@ -53,17 +53,17 @@ class PageResult<T> extends Result<T> {
   factory PageResult.fromJson(String jsonString) {
     Map<String, dynamic> result = json.decode(jsonString);
     return PageResult(
-        current: result['current'],
-        size: result['size'],
-        total: result['total'],
-        code: result['code'],
-        message: result['message'],
-        success: result['success'],
-        timestamp: result['timestamp'],
-        data: result['data'].cast<T>(),);
+      current: result['current'],
+      size: result['size'],
+      total: result['total'],
+      code: result['code'],
+      message: result['message'],
+      success: result['success'],
+      timestamp: result['timestamp'],
+      data: result['data'],
+    );
   }
 }
-
 
 @JsonSerializable(genericArgumentFactories: true)
 class Results<T> {
@@ -75,10 +75,10 @@ class Results<T> {
 
   Results(
       {required this.code,
-        required this.message,
-        required this.success,
-        required this.timestamp,
-        required this.data});
+      required this.message,
+      required this.success,
+      required this.timestamp,
+      required this.data});
 
   factory Results.fromJson(String jsonString) {
     Map<String, dynamic> result = json.decode(jsonString);
@@ -87,9 +87,9 @@ class Results<T> {
       message: result['message'],
       success: result['success'],
       timestamp: DateTime.parse(result['timestamp']),
-      data: result['data'].cast<T>(),);
+      data: result['data'].cast<T>(),
+    );
   }
-
 }
 
 @JsonSerializable(genericArgumentFactories: true)
@@ -111,7 +111,7 @@ class PageResults<T> {
     required this.success,
     required this.timestamp,
     required this.data,
-  }) ;
+  });
 
   factory PageResults.fromJson(String jsonString) {
     Map<String, dynamic> result = json.decode(jsonString);
@@ -123,7 +123,7 @@ class PageResults<T> {
       message: result['message'],
       success: result['success'],
       timestamp: DateTime.parse(result['timestamp']),
-      data: result['data'].cast<T>(),);
+      data: result['data'].cast<T>(),
+    );
   }
 }
-

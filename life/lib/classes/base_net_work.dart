@@ -13,6 +13,7 @@ class BaseNetWork {
     baseUrl: 'http://39.100.138.72:8080',
     connectTimeout: 10000,
     receiveTimeout: 3000,
+    setRequestContentTypeWhenNoPayload: true,
     headers: {
       HttpHeaders.contentTypeHeader:'application/x-ndjson'
     },
@@ -53,7 +54,9 @@ class ApiService {
 
   Future<T> _get<T>(String url, {Map<String, dynamic>? params}) async {
     var response = await BaseNetWork.dio.get(url,
-        queryParameters: params,);
+        queryParameters: params,
+    );
+
     return response.data;
   }
 

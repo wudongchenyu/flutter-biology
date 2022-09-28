@@ -31,7 +31,7 @@ class _LeftMenuItemWidgetState extends State<LeftMenuItemWidget> {
       title: TextButton(
         onPressed: () async {
           Navigator.pop(context);
-          CustomRouter().push(
+          Delegate().push(
             name: '/biology/page',
             arguments: {
               'species' : widget.species,
